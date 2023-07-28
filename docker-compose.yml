@@ -1,0 +1,73 @@
+services:
+  loadbalancer:
+    container_name: loadbalancer
+    build: docker/loadbalancer
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      dmz1:
+        ipv4_address: 192.168.10.30
+
+  web1:
+    container_name: web1
+    build: docker/client
+    networks:
+      dmz1:
+        ipv4_address: 192.168.10.10
+      dmz2:
+        ipv4_address: 192.168.20.10
+    depends_on:
+      - bdd
+
+  web2:
+    container_name: web2
+    build: docker/client
+    networks:
+      dmz1:
+        ipv4_address: 192.168.10.20
+      dmz2:
+        ipv4_address: 192.168.20.20
+    depends_on:
+      - bdd
+
+  bdd:
+    container_name: bdd
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: E-commerce
+      MYSQL_USER: ipssi
+      MYSQL_PASSWORD: ipssi
+    volumes:
+      - ./docker/bdd:/var/lib/mysql
+    networks:
+      dmz2:
+        ipv4_address: 192.168.20.5
+
+  adminer-debug:
+    container_name: adminer-debug
+    image: adminer
+    ports:
+      - "8080:8080"
+    networks:
+      dmz2:
+        ipv4_address: 192.168.20.80
+    depends_on:
+      - bdd
+
+networks:
+  dmz1:
+    name: dmz1
+    driver: bridge
+    external: false
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+  dmz2:
+    name: dmz2
+    driver: bridge
+    external: false
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
