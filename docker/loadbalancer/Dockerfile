@@ -1,5 +1,5 @@
 FROM nginx:latest
-MAINTAINER fabien_colard
+MAINTAINER fabien5525
 
 RUN apt-get update -y && apt-get install -y openssl
 

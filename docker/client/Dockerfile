@@ -2,7 +2,7 @@ FROM debian:bullseye
 
 MAINTAINER fabien5525
 
-# Install curl, node18, git, php8, composer, nginx, wget
+# Install curl, node18, git, nginx, wget
 RUN apt-get update && apt-get install -y curl && \
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
